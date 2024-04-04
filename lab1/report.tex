@@ -1,0 +1,103 @@
+\documentclass{ctexart}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{xunicode-addon}
+\usepackage{booktabs}
+\usepackage[a4paper,hmargin=1.25in,vmargin=1in]{geometry}
+% !TeX program = xelatex
+\title{\begin{figure}[H]
+	\centering 
+	\includegraphics[height=7cm,width=14cm]{E:/Pictures/中科大.jpg}
+	\end{figure}\Huge\textbf{Lab 1}\\\huge{圆形镜面成像问题}}
+\date{}
+\punctstyle{banjiao} 
+\pagestyle{fancy}
+	\fancyhead[C]{\LARGE\textbf{Lab 1}}
+	\fancyhead[L]{}
+	\fancyhead[R]{}
+	\fancyfoot[C]{\thepage}
+\begin{document}
+	\maketitle
+	\thispagestyle{empty}
+	
+	\[\makebox{\Large{姓名：\underline{\makebox[5cm]{高茂航}}}}\]
+	
+    \[\makebox{\Large{学号：\underline{\makebox[5cm]{PB22061161}}}}\]
+	
+	$$\makebox{\Large{日期：\underline{\makebox[5cm]{2024.3.8}}}}$$
+	
+	\clearpage
+
+	\pagenumbering{arabic}
+
+	\section{Algorithm Description}
+	设$T(cos\theta,sin\theta)$,则有
+	$$
+	\begin{aligned}
+	PT+QT &= \sqrt{(P_x-\cos\theta)^2+\sin^2\theta}+\sqrt{(Q_x-\cos\theta)^2+(Q_y-\sin\theta)^2} \\
+	&= \sqrt{P_x^2-2P_x\cos\theta+1}+\sqrt{Q_x^2+Q_y^2+1-2Q_x\cos\theta-2Q_y\sin\theta}
+	\end{aligned}
+	$$
+		由费马原理，光线沿$PT+QT$最短的路径传播，因此只需对上式求导求极小值点。关于$\theta$求导得
+		$$\frac{P_xsin\theta}{\sqrt{P_x^2-2P_xcos\theta+1}}+\frac{Q_xsin\theta-Q_ycos\theta}{\sqrt{Q_x^2+Q_y^2+1-2Q_xcos\theta-2Q_ysin\theta}}$$
+		故只需用二分法解非线性方程
+		$$P_xsin\theta\sqrt{Q_x^2+Q_y^2+1-2Q_xcos\theta-2Q_ysin\theta}+(Q_xsin\theta-Q_ycos\theta)\sqrt{P_x^2-2P_xcos\theta+1}=0$$
+		$$T_x=cos\theta$$
+		$$T_y=sin\theta$$
+		由对称性易知
+	$$R_x=\frac{2Q_y-Q_xtan\theta -kQ_x +k(2T_x - Q_x) - 2T_y}{k-tan\theta}$$
+	$$R_y=Q_y-(Q_x - R_x)\theta$$
+	
+\section{Results}
+$$P = (-2, 0), Q = (-1, 1):T = (-0.885670, 0.464316), R = (-0.380057, 0.674993)$$
+
+$$P = (-10, 0), Q = (-2, 1): T = (-0.959312, 0.282350), R = (0.304214, 0.321811)$$
+
+$$P = (-1.000001, 0), Q = (-2, 2):T = (-1.000000 , 0.000002) , R = (0.000007 , 1.999996)$$
+
+$$P = (-2, 0), Q = (-1, 0.000001):T = (-1.000000 , 0.000001) , R = (-1.000000 , 0.000001)$$
+
+$$P = (-2.33, 0), Q = (-3, 1):T = (-0.989279 , 0.146038) , R = (1.182424 , 0.382590)$$
+
+$$P = (-3, 0), Q = (-1, 0.5):T = (-0.922615 , 0.385721) , R = (-0.786920 , 0.410917)$$
+
+$$P = (-3, 0), Q = (-2, 10):T = (-0.827028 , 0.562160) , R = (8.380296 , 2.944148)$$
+
+$$P = (-3, 0), Q = (-3, 1):T = (-0.987408 , 0.158192) , R = (1.187435 , 0.329136)$$
+
+$$P = (-10, 0), Q = (-2, 1):T = (-0.959312 , 0.282350) , R = (0.304214 , 0.321811)$$
+
+$$P = (-1024, 0), Q = (-8, 4):T = (-0.970066 , 0.242842) , R = (7.000894 , 0.244735)$$
+	
+	
+	\section{Conclusion}
+
+本实验提高精度的主要措施：
+
+1.使用long double 类型；
+
+2.用较多位数来表示$\pi$；
+
+3.将含有除法的方程交叉相乘，通过乘法代替除法，以减少在求商时的误差；
+
+4.在用二分法解非线性方程时，限制条件是结果的绝对值$\leq10^{-7}$。
+
+但由于本实验的方程较为复杂，
+含有三角函数、根式、平方等易造成误差放大的因素，
+暂时还未找到其他较好的减少误差的办法，但还尝试了另一种思路，叙述如下：
+
+设OT的延长线交PQ于R，则由角平分线定理，有$$\frac{QT}{PT}=\frac{QR}{RP}=\frac{Q_y}{R_y}-1$$
+设$T(x,y),k=\frac{Q_y}{Q_x-P_x}$，带入上述方程化简得：
+$$\frac{Q_y^2(kx-y)^2+k^2P_x^2y^2-2kQ_yP_xy(kx-y)}{k^2P_x^2y^2}=\frac{Q_y^2+Q_x^2+1-2yQ_y-2xQ_x}{1+P_x^2-2xP_x}$$
+故只需用for循环遍历或二分法解非线性方程$$(Q_y^2(kx-y)^2+k^2P_x^2y^2-2kQ_yP_xy(kx-y))(1+P_x^2-2xP_x)-(k^2P_x^2y^2)(Q_y^2+Q_x^2+1-2yQ_y-2xQ_x)=0$$
+$$y=\sqrt{1-x^2}$$
+
+由对称性易知
+$$R_x=\frac{\frac{Q_xT_y}{T_x} + \frac{T_x(2T_x - Q_x)}{T_y} + 2T_y -2Q_y}{\frac{T_x}{T_y}+\frac{T_y}{T_x}}$$
+$$R_y=Q_y-\frac{T_y}{T_x(Q_x - R_x)}$$
+但验证结果时发现，上述方法在遇到一些极端情况如$P = (-1.000001, 0), Q = (-2, 2)$时，中间的运算过程会出现极小的浮点数导致无法继续运算，所以这种思路在细节上仍有待改进。
+
+\end{document}

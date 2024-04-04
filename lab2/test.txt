@@ -1,0 +1,153 @@
+long double epsilon1 = 1;    
+    long double* Presol1 = PreciseSol(x , epsilon1);
+    for(int i = 0; i < 99; i++)
+    {
+        A[i][i + 1] = epsilon1 + h;
+        A[i + 1][i] = epsilon1;
+    }
+    for(int i = 0; i < 100; i++)
+        A[i][i] = -(2 * epsilon1 + h);
+    //for(int i = 0; i < 100; i++)
+    //    cout << Presol1[i];
+    long double* Column1 = Column_Elimination(A , b);
+    long double* Seidel1 = Gauss_Seidel(S, Inv, b);
+    long double errorColumn1 = 0, errorSeidel1 = 0;;
+    for(int i = 0; i < 100; i++)
+    {
+        errorColumn1 += abs(Column1[i] - Presol1[i]) / 100;
+        errorSeidel1 += abs(Seidel1[i] - Presol1[i]) / 100;
+    }
+    cout << "epsilon=1时，列主元消元法的相对误差为"  << errorColumn1 <<"，法的相对误差为"  << errorSeidel1 << endl;
+    delete[] Presol1;
+
+    long double epsilon2 = 0.1;    
+    long double* Presol2 = PreciseSol(x , epsilon2);
+    for(int i = 0; i < 99; i++)
+    {
+        A[i][i + 1] = epsilon2 + h;
+        A[i + 1][i] = epsilon2;
+    }
+    for(int i = 0; i < 100; i++)
+        A[i][i] = -(2 * epsilon2 + h);
+    long double* Column2 = Column_Elimination(A , b);
+    long double* Seidel2 = Gauss_Seidel(S, Inv, b);
+    long double errorColumn2 = 0, errorSeidel2 = 0;;
+    for(int i = 0; i < 100; i++)
+    {
+        errorColumn2 += abs(Column2[i] - Presol2[i]) / 100;
+        errorSeidel2 += abs(Seidel2[i] - Presol2[i]) / 100;
+    }
+    cout << "epsilon=0.1时，列主元消元法的相对误差为"  << errorColumn2 <<"，法的相对误差为"  << errorSeidel2 << endl;
+    delete[] Presol2;
+
+    long double epsilon3 = 0.01;    
+    long double* Presol3 = PreciseSol(x , epsilon3);
+    for(int i = 0; i < 99; i++)
+    {
+        A[i][i + 1] = epsilon3 + h;
+        A[i + 1][i] = epsilon3;
+    }
+    for(int i = 0; i < 100; i++)
+        A[i][i] = -(2 * epsilon3 + h);
+    long double* Column3 = Column_Elimination(A , b);
+    long double* Seidel3 = Gauss_Seidel(S, Inv, b);
+    long double errorColumn3 = 0, errorSeidel3 = 0;;
+    for(int i = 0; i < 100; i++)
+    {
+        errorColumn3 += abs(Column3[i] - Presol3[i]) / 100;
+        errorSeidel3 += abs(Seidel3[i] - Presol3[i]) / 100;
+    }
+    cout << "epsilon=0.01时，列主元消元法的相对误差为"  << errorColumn3 <<"，法的相对误差为"  << errorSeidel3 << endl;
+    delete[] Presol3;
+
+    long double epsilon4 = 0.0001;    
+    long double* Presol4 = PreciseSol(x , epsilon4);
+    for(int i = 0; i < 99; i++)
+    {
+        A[i][i + 1] = epsilon4 + h;
+        A[i + 1][i] = epsilon4;
+    }
+    for(int i = 0; i < 100; i++)
+        A[i][i] = -(2 * epsilon4 + h);
+    for(int i = 0; i < 99; i++)
+        A[i][i + 1] = epsilon4 + h;
+    long double* Column4 = Column_Elimination(A , b);
+    long double* Seidel4 = Gauss_Seidel(S, Inv, b);
+    long double errorColumn4 = 0, errorSeidel4 = 0;;
+    for(int i = 0; i < 100; i++)
+    {
+        errorColumn4 += abs(Column4[i] - Presol4[i]) / 100;
+        errorSeidel4 += abs(Seidel4[i] - Presol4[i]) / 100;
+    }
+    cout << "epsilon=0.0001时，列主元消元法的相对误差为"  << errorColumn4 <<"，法的相对误差为"  << errorSeidel4 << endl;
+    delete[] Presol4;
+
+    /*for(int i = 97; i < n; i++)
+    {
+        for(int j = 0; j < n; j++)
+            cout << S[i][j] << " ";
+        cout << endl;
+    }
+    cout << endl;
+    for(int i = 98; i < n; i++)
+    {
+        for(int j = 0; j < 100; j++)
+            cout << Inv[i][j] << " ";
+        cout << endl;
+    }
+    cout << endl;*/
+    /*for(int i = 0; i < 100; i++)
+    {
+        for(int j = 0; j < 100; j++)
+        {
+            cout << S[i][j];
+        }
+    }*/
+
+    void Calculate(long double epsilon)
+{
+    long double* Presol = PreciseSol(x , epsilon);
+    for(int i = 0; i < n - 1; i++)
+    {
+        A[i][i + 1] = epsilon + h;
+        A[i + 1][i] = epsilon;
+    }
+    for(int i = 0; i < n; i++)
+        A[i][i] = -(2 * epsilon + h);
+    //for(int i = 0; i < 100; i++)
+    //    cout << Presol1[i];
+    long double S[100][100], Inv[100][100];
+    fill(&S[0][0], &S[0][0] + sizeof(S) / sizeof(S[0][0]), 0);
+    fill(&Inv[0][0], &Inv[0][0] + sizeof(Inv) / sizeof(Inv[0][0]), 0);
+    long double init1 = (epsilon + h) / (2 * epsilon + h);
+    long double temp = epsilon / (2 * epsilon + h);
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = i , k = 1; j < n && k < n; j++, k++)
+        {
+            S[j][k] = init1;
+        }
+        init1 *= temp; 
+    }
+    //for(int i = 0; i < n; i++)
+    //    cout << S[0][i];
+    long double init2 = -1 / (2 * epsilon + h);
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = i, k = 0; j < n && k < n; j++ , k++)
+        {
+            Inv[j][k] = init2;
+        }
+        init2 *= temp; 
+    }
+    long double* Column = Column_Elimination(A);
+    long double* Seidel = Gauss_Seidel(S, Inv);
+    long double errorColumn = 0, errorSeidel = 0;
+    for(int i = 0; i < n; i++)
+    {
+        errorColumn += abs(Column[i] - Presol[i]) / 100;
+        errorSeidel += abs(Seidel[i] - Presol[i]) / 100;
+    }
+    cout << "epsilon=" << epsilon << "时，列主元消元法的相对误差为"  << errorColumn <<"，Gauss_Seidel迭代法的相对误差为"  << errorSeidel << endl;
+    delete[] Presol;
+}
