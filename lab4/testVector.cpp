@@ -13,6 +13,7 @@ bool isEigenVector(vector<vector<long double>> A, vector<long double> v, long do
     }
     return true;
 }
+
 int main()
 {
     vector<vector<long double>> A = {{1.71851, 1.66005, 1.14971, 0.792285}, {1.66005, 1.65417, 1.09037, 0.759718}, {1.14971, 1.09037, 0.906686, 0.636949}, {0.792285, 0.759718, 0.636949, 0.450517}};

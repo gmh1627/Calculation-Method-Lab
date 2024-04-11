@@ -2,13 +2,88 @@
 using namespace std;
 
 //计算向量的无穷范数，即找到向量中绝对值最大的元素
-long double Norm(long double* x1, int n)
+/*long double Norm(long double* x1, int n)
 {
     long double norm = 0;
     for(int i = 0; i < n - 1; i++)
         if(fabsl(x1[i]) > norm)
             norm = fabsl(x1[i]);
     return norm;
+}*/
+#include<bits/stdc++.h>
+using namespace std;
+
+// Function prototypes
+vector<vector<long double>> generateRandomMatrix(int rows, int cols);
+pair<int, int> chooseMax(vector<vector<long double>>& A);
+vector<vector<long double>> calAT(vector<vector<long double>> A);
+vector<vector<long double>> calAAT(vector<vector<long double>>& A);
+long double calculateElement(const vector<vector<long double>>& A, int i, int j, long double p, long double q, long double t, long double c, long double d);
+vector<vector<long double>> calQTAQ(vector<vector<long double>> A);
+int judgeEnd(vector<vector<long double>> A);
+vector<long double> calEigenValue(vector<vector<long double>>& A);
+vector<vector<long double>> Column_Elimination(vector<vector<long double>> A);
+vector<long double> SolveUpperTriangle(vector<vector<long double>> A, vector<long double> b);
+vector<vector<long double>> solve(vector<vector<long double>> A, int cnt);
+vector<vector<long double>> calEigenVector(vector<vector<long double>> A, vector<long double> eigenValue);
+vector<vector<long double>> calSigma(vector<long double> x);
+
+int main()
+{
+    vector<vector<long double>> A = generateRandomMatrix(4, 3);
+    /*vector<vector<long double>> A = vector<vector<long double>>(3, vector<long double>(4));
+    A[0][0] = 3, A[0][1] = 1, A[0][2] = 2, A[0][3] = 1;
+    A[1][0] = 1, A[1][1] = 3, A[1][2] = 4, A[1][3] = 1;
+    A[2][0] = 2, A[2][1] = 4, A[2][2] = 6, A[2][3] = 1;
+    for(int i = 0; i < 3; i++)
+    {
+        for(int j = 0; j < 4; j++)
+            cout << A[i][j] << " ";
+        cout << endl;
+    }*/
+    vector<vector<long double>> AT = calAT(A);
+    vector<vector<long double>> AAT = calAAT(A);
+    for(int i = 0; i < 4; i++)
+    {
+        for(int j = 0; j < 4; j++)
+            cout << AAT[i][j] << " ";
+        cout << endl;
+    }
+    vector<long double> x =calEigenValue(AAT);
+    cout << "EigenValue: ";
+    for(int i = 0; i < x.size(); i++)
+        cout << x[i] << " ";
+    vector<vector<long double>> Sigma1 = calSigma(x);
+    vector<long double> x1;
+    x1.reserve(x.size());
+    unique_copy(x.begin(), x.end(), back_inserter(x1));
+    vector<vector<long double>> eigenVector1 = calEigenVector(AAT, x1);
+    cout << endl << "EigenVector: " << endl;
+    for(int i = 0; i < 4; i++)
+    {
+        for(int j = 0; j < 4; j++)
+            cout << eigenVector1[i][j] << " ";
+        cout << endl;
+    }
+    cout << endl;
+/*
+    vector<vector<long double>> ATA = calAAT(AT);
+    vector<long double> y =calEigenValue(ATA);
+    cout << "EigenValue: ";
+    for(int i = 0; i < 3; i++)
+        cout << y[i] << " ";
+    vector<long double> y1;
+    x1.reserve(y.size());
+    unique_copy(y.begin(), y.end(), back_inserter(y1));
+    vector<vector<long double>> eigenVector2 = calEigenVector(ATA, y1);
+    cout << endl << "EigenVector: " << endl;
+    for(int i = 0; i < 3; i++)
+    {
+        for(int j = 0; j < 3; j++)
+            cout << eigenVector2[i][j] << " ";
+        cout << endl;
+    }*/
+    return 0;
 }
 
 //Generate a random matrix with given rows and columns
@@ -284,57 +359,12 @@ vector<vector<long double>> calEigenVector(vector<vector<long double>> A, vector
     return x;
 }
 
-int main()
+//Calculate the matrix Sigma with the eigenvalue
+vector<vector<long double>> calSigma(vector<long double> x)
 {
-    vector<vector<long double>> A = generateRandomMatrix(4, 3);
-    /*vector<vector<long double>> A = vector<vector<long double>>(3, vector<long double>(4));
-    A[0][0] = 3, A[0][1] = 1, A[0][2] = 2, A[0][3] = 1;
-    A[1][0] = 1, A[1][1] = 3, A[1][2] = 4, A[1][3] = 1;
-    A[2][0] = 2, A[2][1] = 4, A[2][2] = 6, A[2][3] = 1;
-    for(int i = 0; i < 3; i++)
-    {
-        for(int j = 0; j < 4; j++)
-            cout << A[i][j] << " ";
-        cout << endl;
-    }*/
-    vector<vector<long double>> AT = calAT(A);
-    vector<vector<long double>> AAT = calAAT(A);
-    for(int i = 0; i < 4; i++)
-    {
-        for(int j = 0; j < 4; j++)
-            cout << AAT[i][j] << " ";
-        cout << endl;
-    }
-    vector<long double> x =calEigenValue(AAT);
-    sort(x.begin(), x.end());
-    x.erase(unique(x.begin(), x.end()), x.end()); 
-    cout << "EigenValue: ";
-    for(int i = 0; i < x.size(); i++)
-        cout << x[i] << " ";
-    vector<vector<long double>> eigenVector1 = calEigenVector(AAT, x);
-    cout << endl << "EigenVector: " << endl;
-    for(int i = 0; i < 4; i++)
-    {
-        for(int j = 0; j < 4; j++)
-            cout << eigenVector1[i][j] << " ";
-        cout << endl;
-    }
-    cout << endl;
-/*
-    vector<vector<long double>> ATA = calAAT(AT);
-    vector<long double> y =calEigenValue(ATA);
-    sort(y.begin(), y.end());
-    x.erase(unique(y.begin(), y.end()), y.end()); 
-    cout << "EigenValue: ";
-    for(int i = 0; i < 3; i++)
-        cout << y[i] << " ";    
-    vector<vector<long double>> eigenVector2 = calEigenVector(ATA, y);
-    cout << endl << "EigenVector: " << endl;
-    for(int i = 0; i < 3; i++)
-    {
-        for(int j = 0; j < 3; j++)
-            cout << eigenVector2[i][j] << " ";
-        cout << endl;
-    }*/
-    return 0;
+    int n = x.size();
+    vector<vector<long double>> Sigma(n, vector<long double>(n));
+    for(int i = 0; i < n; i++)
+        Sigma[i][i] = sqrt(x[i]);
+    return Sigma;
 }

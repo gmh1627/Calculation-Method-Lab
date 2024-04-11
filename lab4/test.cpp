@@ -1,16 +1,6 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-//计算向量的无穷范数，即找到向量中绝对值最大的元素
-long double Norm(long double* x1, int n)
-{
-    long double norm = 0;
-    for(int i = 0; i < n - 1; i++)
-        if(fabsl(x1[i]) > norm)
-            norm = fabsl(x1[i]);
-    return norm;
-}
-
 vector<vector<long double>> generateRandomMatrix(int rows, int cols) {
     random_device rd;//随机数种子
     mt19937 gen(rd());//使用 rd 生成的随机数来初始化一个mt19937类型的随机数生成器 gen
