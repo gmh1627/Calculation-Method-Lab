@@ -30,7 +30,16 @@ vector<vector<long double>> Column_Elimination(vector<vector<long double>> A)
     }
     return Temp;
 }
-
+/*vector<vector<long double>> A = vector<vector<long double>>(3, vector<long double>(4));
+    A[0][0] = 3, A[0][1] = 1, A[0][2] = 2, A[0][3] = 1;
+    A[1][0] = 1, A[1][1] = 3, A[1][2] = 4, A[1][3] = 1;
+    A[2][0] = 2, A[2][1] = 4, A[2][2] = 6, A[2][3] = 1;
+    for(int i = 0; i < 3; i++)
+    {
+        for(int j = 0; j < 4; j++)
+            cout << A[i][j] << " ";
+        cout << endl;
+    }*/
 //
 vector<long double> SolveUpperTriangle(vector<vector<long double>> A, vector<long double> b)
 {

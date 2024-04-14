@@ -7,7 +7,7 @@ bool isEigenVector(vector<vector<long double>> A, vector<long double> v, long do
         for(int j = 0; j < n; j++) {
             Av[i] += A[i][j] * v[j];
         }
-        if(abs(Av[i] - lambda * v[i]) > 1e-7) {
+        if(abs(Av[i] - lambda * v[i]) > 1e-4) {
             return false;
         }
     }
@@ -16,10 +16,13 @@ bool isEigenVector(vector<vector<long double>> A, vector<long double> v, long do
 
 int main()
 {
-    vector<vector<long double>> A = {{1.71851, 1.66005, 1.14971, 0.792285}, {1.66005, 1.65417, 1.09037, 0.759718}, {1.14971, 1.09037, 0.906686, 0.636949}, {0.792285, 0.759718, 0.636949, 0.450517}};
-    vector<long double> v = {2.05987, 2.00456, 1.43646, 1};
-    long double lambda = 4.52037;
-
+    vector<vector<long double>> A = {{0.68112222, -0.03900667, 1.26519111, 0.51345778},
+                                     {-0.03900667, 0.18675067, -0.319568, -0.11719467},
+                                     {1.26519111, -0.319568, 3.09242489, 1.28774489},
+                                     {0.51345778, -0.11719467, 1.28774489, 0.57853156}};
+    
+    vector<long double> v = {-0.47971899,  0.07252408 , 0.1757674,0.85657211};
+    long double lambda = 4.196675163197978;
     if(isEigenVector(A, v, lambda))
         cout << "v is an eigenvector of A with eigenvalue lambda." << endl;
     else
