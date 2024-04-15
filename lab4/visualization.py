@@ -7,12 +7,8 @@ def readIrisData(filename):
     return data[:, :4].T, data[:, 4]
 
 X, labels = readIrisData("iris.txt")
-n1, n2 = X.shape
-X -= X.mean(axis=1, keepdims=True)
-XT = X.T
-XXT = np.dot(X, XT)
 
-Var = XXT / n2
+Var = np.cov(X)
 x, EigenVector = eigh(Var)
 x = sorted(x, reverse=True)
 
