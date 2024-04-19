@@ -219,9 +219,23 @@ vector<long double> calEigenValue(vector<vector<long double>> A)
     int n = A.size();
     vector<long double> eigenValue(n);
     vector<vector<long double>> QTAQ= calQTAQ(A);
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++)
+            cout << QTAQ[i][j] << " ";
+            cout << endl;
+        }
+        cout << endl;
     int i, j;
-    while(!judgeEnd(QTAQ))
+    while(!judgeEnd(QTAQ)){
         QTAQ = calQTAQ(QTAQ);
+        for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            cout << QTAQ[i][j] << " ";   
+        }
+        cout << endl;
+        }
+        cout << endl;
+    }
     for(i = 0; i < n; i++)
         eigenValue[i] =QTAQ[i][i];
     return eigenValue;
