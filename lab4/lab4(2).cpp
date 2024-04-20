@@ -67,13 +67,6 @@ int main()
         for(int j = 0; j < n2; j++)
             X[i][j] -= avg;
     }
-    cout << "X: " << endl;
-    for(int i = 0; i < n1; i++)
-    {
-        for(int j = 0; j < n2; j++)
-            cout << X[i][j] << " ";
-        cout << endl;
-    }
     vector<vector<long double>> XT = calAT(X);
     vector<vector<long double>> XXT = multiplyMatrices(X, XT);
     vector<vector<long double>> Var(n1, vector<long double>(n1));
@@ -86,6 +79,7 @@ int main()
     cout<<"特征值："<<endl;
     for(int i = 0; i < n1; i++)
         cout << x[i] << " ";
+    cout << endl;
     vector<long double> x1;
     x1.reserve(x.size());
     unique_copy(x.begin(), x.end(), back_inserter(x1));
