@@ -50,13 +50,14 @@ long double EuclideanNorm(vector<long double> x);
 vector<vector<long double>> Normalization(vector<vector<long double>> A);
 
 // 计算矩阵 A 和 B 的乘积
-vector<vector<long double>> multiplyMatrices(const vector<vector<long double>> A, const vector<vector<long double>> B);
+vector<vector<long double>> multiplyMatrices(vector<vector<long double>> A, vector<vector<long double>> B);
 
 int main()
 {
     vector<vector<long double>> X = calAT(readIrisData("iris.txt"));
     int n1 = X.size();
     int n2 = X[0].size();
+    vector<vector<long double>> tempX(n1, vector<long double>(n2));
     long double sum = 0;
     for(int i = 0; i < n1; i++)
     {
@@ -65,14 +66,14 @@ int main()
             sum += X[i][j];
         long double avg = sum / n2;
         for(int j = 0; j < n2; j++)
-            X[i][j] -= avg;
+            tempX[i][j] = X[i][j] - avg;
     }
-    vector<vector<long double>> XT = calAT(X);
-    vector<vector<long double>> XXT = multiplyMatrices(X, XT);
+    vector<vector<long double>> tempXT = calAT(tempX);
+    vector<vector<long double>> tempXXT = multiplyMatrices(tempX, tempXT);
     vector<vector<long double>> Var(n1, vector<long double>(n1));
     for(int i = 0; i < n1; i++)
         for(int j = 0; j < n1; j++)
-            Var[i][j] = XXT[i][j] / n2;
+            Var[i][j] = tempXXT[i][j] / n2;
     vector<long double> x =calEigenValue(Var);
     sort(x.begin(), x.end());
     reverse(x.begin(), x.end());
@@ -92,6 +93,7 @@ int main()
             cout << P[i][j] << " ";
         cout << endl;
     }
+    
     vector<vector<long double>> Y = multiplyMatrices(P, X);
     cout << "Y: " << endl;
     for(int i = 0; i < 2; i++)
@@ -173,7 +175,7 @@ vector<vector<long double>> calAT(vector<vector<long double>> A)
 }
 
 // 计算两个矩阵的乘积
-vector<vector<long double>> multiplyMatrices(const vector<vector<long double>> A, const vector<vector<long double>> B) {
+vector<vector<long double>> multiplyMatrices(vector<vector<long double>> A, vector<vector<long double>> B) {
     int n1 = A.size();
     int n2 = B[0].size();
     int n3 = A[0].size();

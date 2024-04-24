@@ -32,8 +32,44 @@
 	\clearpage
 
 	\pagenumbering{arabic}
+	\section{Problem Descriptions}
+1.对一个随机生成的$\mathbf{A_{4\times 3}}$矩阵进行奇异值分解；
+
+2. 对鸢尾花数据集进行主成分分析，并可视化。
+\section{Analysis and Algorithms}
+\subsection{SVD Decomposition}
+1.  Jacobi方法求矩阵$\mathbf{AA^T}$的特征值;
+
+2. 将$\mathbf{AA^T}$的特征值从大到小排序后，用高斯消元法求解每个特征值对应的特征向量并归一化，然后转置为列向量组，得到$\mathbf{U}_{4\times4}$;
+
+3. 矩阵$\mathbf{\Sigma}_{4\times3}$的主对角元为$\mathbf{AA^T}$的非零特征值的算术平方根（本题中仅考虑了实数情况），其余位置全为0;
+
+4. 矩阵$\mathbf{V^T}_{3\times3}$每行即$\mathbf{U^T}$$\mathbf{A}$对应行除以$\mathbf{\Sigma}$对应的主对角元。
+\subsection{PCA and Visualization}
+1. 对m个n维数据进行中心化处理，按列排列构成矩阵$\mathbf{X}_{n\times m}$；
+
+2. 计算协方差矩阵$\mathbf{Var}_{n\times n}= \frac{1}{m}\mathbf{XXT}$的特征值；
+
+3. 选取最大两个特征值对应的特征向量构成矩阵$\mathbf{P}_{2\times n}$，则$\mathbf{Y}_{2\times m}=\mathbf{PX}$即PCA后的结果，也就是把四维数据压缩为二维，每个数据对应二维平面上的一个点；
+
+4.用python 实现结果的可视化。
 \section{Results}
-	
-		
+	\subsection{SVD Decomposition}
+	\begin{figure}[H]
+		\centering 
+		\includegraphics[height=6cm,width=5cm]{3.png}
+		\end{figure}
+\subsection{PCA and Visualization}
+		\begin{figure}[H]
+			\centering 
+			\includegraphics[height=6cm,width=14cm]{2.png}
+			\end{figure}
+			\begin{figure}[H]
+				\centering 
+				\includegraphics[height=7cm,width=12cm]{1.png}
+				\end{figure}
 	\section{Conclusion}
+	遇到的问题：
+	理论上$\mathbf{AA^T}$和$\mathbf{A^TA}$的非零特征值相同，但是程序计算出的结果会有一些差异，因此$\mathbf{\Sigma}$的主对角元不能取$\mathbf{A^TA}$的特征值的算术平方根，$\mathbf{U^T}$的每行元素也不能直接取$\mathbf{A^TA}$的特征向量，而要按第4步所述计算
+
     \end{document}

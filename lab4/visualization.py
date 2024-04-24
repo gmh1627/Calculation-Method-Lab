@@ -13,6 +13,7 @@ x, EigenVector = eigh(Var)
 x = sorted(x, reverse=True)
 
 P = EigenVector[:, -2:].T
+P = P[::-1]#反转P的行顺序
 Y = np.dot(P, X)
 
 plt.figure()
