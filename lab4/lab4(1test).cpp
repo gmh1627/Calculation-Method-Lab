@@ -22,10 +22,10 @@ vector<vector<long double>> calQTAQ(vector<vector<long double>> A);
 // 判断Jacobi方法是否满足结束条件
 int judgeEnd(vector<vector<long double>> A);
 
-// Jacobi方法计算矩阵 A 的特征值
-vector<long double> calEigenValue(vector<vector<long double>> A);
+// Jacobi方法计算矩阵 A 的特征值和特征向量
+pair<vector<long double>, vector<vector<long double>>> calEigenValueAndVector(vector<vector<long double>> A);
 
-// 对矩阵 A 进行列主元消元化成上三角
+// 对矩阵 A 进行列主元化成上三角
 vector<vector<long double>> Column_Elimination(vector<vector<long double>> A);
 
 // 求解系数矩阵为上三角矩阵A的线性方程组
@@ -64,10 +64,21 @@ int main()
     vector<vector<long double>> AAT = multiplyMatrices(A, AT);
     int n1 = AAT.size();
     int n2 = A[0].size();
-    vector<long double> x =calEigenValue(AAT);
-    sort(x.begin(), x.end());
-    reverse(x.begin(), x.end());
-    vector<vector<long double>> U = calAT(Normalization(calEigenVector(AAT, x)));
+    pair<vector<long double>, vector<vector<long double>>> eigenResult = calEigenValueAndVector(AAT);
+    vector<long double> x = eigenResult.first;
+    vector<vector<long double>> P = eigenResult.second;
+    cout << "x: " << endl;
+    for(int i = 0; i < n1; i++)
+        cout << x[i] << " ";
+vector<vector<long double>> temp = Normalization(P);
+cout << "temp: " << endl;
+for(int i = 0; i < n1; i++)
+{
+    for(int j = 0; j < n1; j++)
+        cout << temp[i][j] << " ";
+    cout << endl;
+}
+    vector<vector<long double>> U = calAT(Normalization(P));
     cout << "U: " << endl;
     for(int i = 0; i < n1; i++)
     {
@@ -212,162 +223,40 @@ int judgeEnd(vector<vector<long double>> A)
         return 1;
 }
 
-// Jacobi方法计算矩阵 A 的特征值
-vector<long double> calEigenValue(vector<vector<long double>> A)
+// Jacobi方法计算矩阵 A 的特征值和特征向量
+pair<vector<long double>, vector<vector<long double>>> calEigenValueAndVector(vector<vector<long double>> A) 
 {
     int n = A.size();
-    vector<long double> eigenValue(n);
-    vector<vector<long double>> QTAQ= calQTAQ(A);
-    int i, j;
-    while(!judgeEnd(QTAQ))
-    {
-        long double sum = 0;
-        for(i = 0; i < n; i++)
-            for(j = 0; j < n; j++)
-                if(i != j)
-                    sum += QTAQ[i][j] * QTAQ[i][j];
-        cout << "非对角元平方和: " << sum << endl;
+    vector<vector<long double>> P(n, vector<long double>(n, 0.0));
+    for (int i = 0; i < n; i++) 
+        P[i][i] = 1.0;
+
+    vector<vector<long double>> QTAQ = calQTAQ(A);
+    while (!judgeEnd(QTAQ)) {
         QTAQ = calQTAQ(QTAQ);
+        auto tempP = P;
+        P = multiplyMatrices(tempP, QTAQ);
     }
-    cout << endl;
-    for(i = 0; i < n; i++)
-        eigenValue[i] =QTAQ[i][i];
-    return eigenValue;
-}
 
-// 对矩阵A进行列主元消元化成上三角
-vector<vector<long double>> Column_Elimination(vector<vector<long double>> A)
-{
-    int n = A.size();
-    vector<vector<long double>> Temp(n, vector<long double>(n));
-    for(int i = 0; i < n; i++)
-        for(int j = 0; j < n; j++)
-            Temp[i][j] = A[i][j];
-    for(int col = 0; col < n; col++)
+    vector<long double> eigenvalues(n);
+    for (int i = 0; i < n; i++) eigenvalues[i] = QTAQ[i][i];
+
+    // Create pairs of eigenvalue and corresponding eigenvector
+    vector<pair<long double, vector<long double>>> pairs(n);
+    for (int i = 0; i < n; i++) pairs[i] = {eigenvalues[i], P[i]};
+
+    // Sort the pairs in descending order of eigenvalues
+    sort(pairs.begin(), pairs.end(), [](const auto& a, const auto& b) {
+        return a.first > b.first;
+    });
+
+    // Unpack the sorted pairs back into eigenvalues and eigenvectors
+    for (int i = 0; i < n; i++) 
     {
-        long double maxnum = abs(Temp[col][col]);
-        int maxrow = col;
-        for(int row = col + 1; row < n; row++)
-        {
-            if(abs(Temp[row][col]) > maxnum)
-            {
-                maxnum = abs(Temp[row][col]);
-                maxrow = row;
-            }
-        }
-        swap(Temp[col], Temp[maxrow]);
-        for(int row = col + 1; row < n; row++)
-        {
-            long double res = Temp[row][col] / Temp[col][col];
-            for(int loc = col; loc < n; loc++)
-                Temp[row][loc] -= Temp[col][loc] * res; 
-        }
+        eigenvalues[i] = pairs[i].first;
+        P[i] = pairs[i].second;
     }
-    return Temp;
-}
-
-// 求解系数矩阵为上三角矩阵A，且A的行列式不为0的线性方程组
-vector<long double> SolveUpperTriangle(vector<vector<long double>> A, vector<long double> b)
-{
-    int n = A.size();
-    vector<long double> x(n);
-    vector<vector<long double>> Temp(n, vector<long double>(n+1));
-    for(int i = 0; i < n; i++)
-        for(int j = 0; j < n; j++)
-            Temp[i][j] = A[i][j];
-    for(int i = 0; i < n; i++)
-        Temp[i][n] = b[i];
-    for(int row = n-1; row >= 0; row--)
-    {
-        for(int col = row + 1; col < n; col++)
-        {
-            Temp[row][n] -= Temp[col][n] * Temp[row][col] / Temp[col][col];
-            Temp[row][col] = 0;
-        }
-        Temp[row][n] /= Temp[row][row];
-        Temp[row][row] = 1;
-    }
-    for(int i = 0; i < n; i++)
-        x[i] = Temp[i][n];
-    return x;
-}
-
-// 解系数矩阵为上三角矩阵 A 的线性方程组，且A全为0的行数为 cnt
-vector<vector<long double>> solve(vector<vector<long double>> A, int cnt)
-{
-    int n = A.size();
-    vector<vector<long double>> x(cnt, vector<long double>(n));
-    vector<vector<long double>> Temp(n-cnt, vector<long double>(n-cnt));
-    vector<long double> Tempb(n-cnt);
-    for(int i = 0; i < cnt; i++)
-    {
-        for(int j = n - 1; j >= n - cnt; j--)
-        {
-            if(j >= n - i)
-                x[i][j] = 0;
-            else
-                x[i][j] = 1;
-        }
-    }
-    for(int i = 0; i < n - cnt; i++)
-        for(int j = 0; j < n - cnt; j++)
-            Temp[i][j] = A[i][j];
-    for(int i = 0; i < cnt; i++)
-    {
-        for(int j = n - cnt - 1; j >=  0; j--)
-        {
-            Tempb[j] = 0;
-            for(int k = 0; k < cnt; k++)
-                Tempb[j] -= A[j][n- cnt + k] * x[i][n- cnt + k];
-        }
-        vector<long double> res = SolveUpperTriangle(Temp, Tempb);
-        for(int j = 0; j < n - cnt; j++)
-            x[i][j] = res[j];
-    }
-    return x;
-}
-
-// 使用给定的特征值计算矩阵 A 的特征向量
-vector<vector<long double>> calEigenVector(vector<vector<long double>> A, vector<long double> eigenValue)
-{
-    int n = A.size();
-    int num = 0;
-    vector<vector<long double>> x(n, vector<long double>(n));
-    vector<vector<long double>> tempMartix(n, vector<long double>(n));
-    vector<vector<long double>> eigenVector(n, vector<long double>(n));
-    for(int k = 0; k < n; k++)
-    {
-        for(int i = 0; i < n; i++)
-            for(int j = 0; j < n; j++)
-                i == j ? tempMartix[i][j] = A[i][j] - eigenValue[k] : tempMartix[i][j] = A[i][j];
-
-        vector<vector<long double>> B = Column_Elimination(tempMartix);
-        int cnt = 0;//记录消元后全为0的行数
-        for(int i = 0; i < n; i++)
-        {
-            for(int j = 0; j < n; j++)
-            {
-                if(fabsl(B[i][j]) > 1e-7)
-                    break;
-                else if(j == n - 1)
-                    cnt++;
-            }
-        }
-        vector<vector<long double>> result = solve(B, cnt);
-        for(int i = 0; i < cnt; i++)
-            copy(result[i].begin(), result[i].end(), x[num + i].begin());
-        num += cnt;
-    }
-    return x;
-}
-
-// 使用给定的特征值 x 和矩阵的行数 n1 和列数 n2，计算 Sigma 矩阵
-vector<vector<long double>> calSigma(vector<long double> x, int n1, int n2)
-{
-    vector<vector<long double>> Sigma(n1, vector<long double>(n2));
-    for(int i = 0; i < min(n1, n2); i++)
-        Sigma[i][i] = sqrt(x[i]);
-    return Sigma;
+    return {eigenvalues, P};
 }
 
 // 计算向量 x 的欧几里得范数

@@ -1,8 +1,11 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-// 生成一个具有指定行数和列数的随机矩阵
-vector<vector<long double>> generateRandomMatrix(int rows, int cols);
+// 读取鸢尾花数据集到一个二维数组中
+vector<vector<long double>> readIrisData(const string& filename);
+
+// 读取第五列的值到一个向量中
+vector<long double> readfifthValue(const string& filename);
 
 // 从矩阵 A 非对角元中选择最大的元素，并返回其位置
 pair<int, int> chooseMax(vector<vector<long double>> A);
@@ -10,8 +13,8 @@ pair<int, int> chooseMax(vector<vector<long double>> A);
 // 计算矩阵 A 的转置
 vector<vector<long double>> calAT(vector<vector<long double>> A);
 
-// 计算两个矩阵的乘积
-vector<vector<long double>> multiplyMatrices(const vector<vector<long double>> A, const vector<vector<long double>> B);
+// 计算矩阵 A 和其转置的乘积
+vector<vector<long double>> calAAT(vector<vector<long double>> A);
 
 // 计算矩阵Q^T * A * Q的每个元素，使用给定的参数 p, q, t, c, d
 long double calculateElement(const vector<vector<long double>> A, int i, int j, long double p, long double q, long double t, long double c, long double d);
@@ -19,13 +22,13 @@ long double calculateElement(const vector<vector<long double>> A, int i, int j, 
 // 计算矩阵 Q^T * A * Q
 vector<vector<long double>> calQTAQ(vector<vector<long double>> A);
 
-// 判断Jacobi方法是否满足结束条件
+// 判断Jacobi迭代方法是否满足结束条件
 int judgeEnd(vector<vector<long double>> A);
 
-// Jacobi方法计算矩阵 A 的特征值
+// 计算矩阵 A 的特征值
 vector<long double> calEigenValue(vector<vector<long double>> A);
 
-// 对矩阵 A 进行列主元消元化成上三角
+// 对矩阵 A 进行列主元化成上三角
 vector<vector<long double>> Column_Elimination(vector<vector<long double>> A);
 
 // 求解系数矩阵为上三角矩阵A的线性方程组
@@ -46,69 +49,101 @@ long double EuclideanNorm(vector<long double> x);
 // 对矩阵 A 进行归一化
 vector<vector<long double>> Normalization(vector<vector<long double>> A);
 
-// 计算 VT 矩阵
-vector<vector<long double>> calculateVT(const vector<vector<long double>>& U, const vector<vector<long double>>& A, const vector<vector<long double>>& Sigma1, int n2);
+// 计算矩阵 A 和 B 的乘积
+vector<vector<long double>> multiplyMatrices(vector<vector<long double>> A, vector<vector<long double>> B);
 
 int main()
 {
-    vector<vector<long double>> A = generateRandomMatrix(4, 3);
-    cout << "A: " << endl;
-    for(int i = 0; i < 4; i++)
+    vector<vector<long double>> X = calAT(readIrisData("iris.txt"));
+    int n1 = X.size();
+    int n2 = X[0].size();
+    vector<vector<long double>> tempX(n1, vector<long double>(n2));
+    long double sum = 0;
+    for(int i = 0; i < n1; i++)
     {
-        for(int j = 0; j < 3; j++)
-            cout << A[i][j] << " ";
-        cout << endl;
+        long double sum = 0;
+        for(int j = 0; j < n2; j++)
+            sum += X[i][j];
+        long double avg = sum / n2;
+        for(int j = 0; j < n2; j++)
+            tempX[i][j] = X[i][j] - avg;
     }
-    cout << endl;
-    vector<vector<long double>> AT = calAT(A);
-    vector<vector<long double>> AAT = multiplyMatrices(A, AT);
-    int n1 = AAT.size();
-    int n2 = A[0].size();
-    vector<long double> x =calEigenValue(AAT);
+    vector<vector<long double>> tempXT = calAT(tempX);
+    vector<vector<long double>> tempXXT = multiplyMatrices(tempX, tempXT);
+    vector<vector<long double>> Var(n1, vector<long double>(n1));
+    for(int i = 0; i < n1; i++)
+        for(int j = 0; j < n1; j++)
+            Var[i][j] = tempXXT[i][j] / n2;
+    vector<long double> x =calEigenValue(Var);
     sort(x.begin(), x.end());
     reverse(x.begin(), x.end());
-    vector<vector<long double>> U = calAT(Normalization(calEigenVector(AAT, x)));
-    cout << "U: " << endl;
+    cout<<"特征值："<<endl;
     for(int i = 0; i < n1; i++)
+        cout << x[i] << " ";
+    cout << endl;
+    vector<long double> x1;
+    x1.reserve(x.size());
+    unique_copy(x.begin(), x.end(), back_inserter(x1));
+    vector<vector<long double>> EigenVector = Normalization(calEigenVector(Var, x1));
+    vector<vector<long double>> P(EigenVector.begin(), next(EigenVector.begin(), 2));
+    cout << "P: " << endl;
+    for(int i = 0; i < 2; i++)
     {
         for(int j = 0; j < n1; j++)
-            cout << U[i][j] << " ";
+            cout << P[i][j] << " ";
         cout << endl;
     }
-    cout << endl;
     
-    vector<vector<long double>> Sigma1 = calSigma(x, n1, n2);
-    cout << "Sigma: " << endl;
-    for(int i = 0; i < n1; i++)
+    vector<vector<long double>> Y = multiplyMatrices(P, X);
+    cout << "Y: " << endl;
+    for(int i = 0; i < 2; i++)
     {
         for(int j = 0; j < n2; j++)
-            cout << Sigma1[i][j] << " ";
-        cout << endl;
-    }
-    cout << endl;
-
-    vector<vector<long double>> VT = calculateVT(U, A, Sigma1, n2);
-    cout << "VT: " << endl;
-    for(int i = 0; i < n2; i++)
-    {
-        for(int j = 0; j < n2; j++)
-            cout << VT[i][j] << " ";
+            cout << Y[i][j] << " ";
         cout << endl;
     }
     return 0;
 }
 
-// 生成一个具有指定行数和列数的随机矩阵
-vector<vector<long double>> generateRandomMatrix(int rows, int cols) {
-    random_device rd;//随机数种子
-    mt19937 gen(rd());//使用 rd 生成的随机数来初始化一个mt19937类型的随机数生成器 gen
-    uniform_real_distribution<> dis(0.0, 1.0);//创建一个均匀实数分布 dis
+// 读取鸢尾花数据集到一个二维数组中
+vector<vector<long double>> readIrisData(const string& filename) {
+    ifstream file(filename);
+    vector<vector<long double>> X;
+    string line;
 
-    vector<vector<long double>> matrix(rows, vector<long double>(cols));
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
-            matrix[i][j] = dis(gen);//生成随机数
-    return matrix;
+    while (getline(file, line)) {
+        stringstream ss(line);
+        vector<long double> row;
+        string value;
+        int counter = 0;
+        while (getline(ss, value, ',') && counter < 4) {
+            row.push_back(stod(value));
+            counter++;
+        }
+        X.push_back(row);
+    }
+    return X;
+}
+
+// 读取第五列的值到一个向量中
+vector<long double> readfifthValue(const string& filename) {
+    ifstream file(filename);
+    vector<long double> fifthValues;
+    string line;
+
+    while (getline(file, line)) {
+        stringstream ss(line);
+        string value;
+        int counter = 0;
+        while (getline(ss, value, ',') && counter < 4) {
+            counter++;
+        }
+        if (counter == 4) { 
+            long double fifthValue = stold(value);
+            fifthValues.push_back(fifthValue);
+        }
+    }
+    return fifthValues;
 }
 
 // 找到矩阵 A 中非对角元中绝对值最大的元素，并返回其位置
@@ -140,7 +175,7 @@ vector<vector<long double>> calAT(vector<vector<long double>> A)
 }
 
 // 计算两个矩阵的乘积
-vector<vector<long double>> multiplyMatrices(const vector<vector<long double>> A, const vector<vector<long double>> B) {
+vector<vector<long double>> multiplyMatrices(vector<vector<long double>> A, vector<vector<long double>> B) {
     int n1 = A.size();
     int n2 = B[0].size();
     int n3 = A[0].size();
@@ -199,7 +234,7 @@ vector<vector<long double>> calQTAQ(vector<vector<long double>> A)
     return QTAQ;
 }
 
-// 判断Jacobi方法是否满足结束条件
+// 判断Jacobi迭代方法是否满足结束条件
 int judgeEnd(vector<vector<long double>> A)
 {
     int i, j;
@@ -212,7 +247,7 @@ int judgeEnd(vector<vector<long double>> A)
         return 1;
 }
 
-// Jacobi方法计算矩阵 A 的特征值
+// 计算矩阵 A 的特征值
 vector<long double> calEigenValue(vector<vector<long double>> A)
 {
     int n = A.size();
@@ -220,22 +255,13 @@ vector<long double> calEigenValue(vector<vector<long double>> A)
     vector<vector<long double>> QTAQ= calQTAQ(A);
     int i, j;
     while(!judgeEnd(QTAQ))
-    {
-        long double sum = 0;
-        for(i = 0; i < n; i++)
-            for(j = 0; j < n; j++)
-                if(i != j)
-                    sum += QTAQ[i][j] * QTAQ[i][j];
-        cout << "非对角元平方和: " << sum << endl;
         QTAQ = calQTAQ(QTAQ);
-    }
-    cout << endl;
     for(i = 0; i < n; i++)
         eigenValue[i] =QTAQ[i][i];
     return eigenValue;
 }
 
-// 对矩阵A进行列主元消元化成上三角
+// 对矩阵 A 进行列主元化成上三角
 vector<vector<long double>> Column_Elimination(vector<vector<long double>> A)
 {
     int n = A.size();
@@ -266,7 +292,7 @@ vector<vector<long double>> Column_Elimination(vector<vector<long double>> A)
     return Temp;
 }
 
-// 求解系数矩阵为上三角矩阵A，且A的行列式不为0的线性方程组
+// 求解系数矩阵为上三角矩阵A的线性方程组
 vector<long double> SolveUpperTriangle(vector<vector<long double>> A, vector<long double> b)
 {
     int n = A.size();
@@ -391,14 +417,4 @@ vector<vector<long double>> Normalization(vector<vector<long double>> A)
             A[i][j] /= norm;
     }
     return A;
-}
-
-// 计算 VT 矩阵
-vector<vector<long double>> calculateVT(const vector<vector<long double>>& U, const vector<vector<long double>>& A, const vector<vector<long double>>& Sigma1, int n2) {
-    vector<vector<long double>> UTA = multiplyMatrices(calAT(U), A);
-    vector<vector<long double>> VT(n2, vector<long double>(n2));
-    for(int i = 0; i < n2; i++)
-        for(int j = 0; j < n2; j++)
-            VT[i][j] = UTA[i][j]/Sigma1[i][i];
-    return VT;
 }
