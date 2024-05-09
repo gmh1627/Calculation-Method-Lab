@@ -1,6 +1,8 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+//三次样条插值
+vector<long double> Spline_Interpolation(const vector<long double>& x, const vector<long double>& y);
 // 列主元消去法求解线性方程组
 vector<long double> Column_Elimination(vector<vector<long double>> A, vector<long double> b);
 
@@ -23,8 +25,24 @@ int main()
         h.push_back(0);
         miu.push_back(0);
     }
+    vector<long double> M1 = Spline_Interpolation(x, y);
+    for(int i = 0; i < M1.size(); i++)
+        cout << M1[i] << " ";
+    cout << endl;
+
+    //修改第十个压铁的坐标为(0,10)
+    y[9] = 10;
+    vector<long double> M2 = Spline_Interpolation(x, y);
+    for(int i = 0; i < M2.size(); i++)
+        cout << M2[i] << " ";
+    return 0;
+}
+
+//三次样条插值
+vector<long double> Spline_Interpolation(const vector<long double>& x, const vector<long double>& y) {
     int len = x.size();
     int n = len - 1;
+    vector<long double> h(n), lambda(n), miu(n), d(n);
     for(int i = 0; i < n; i++)
         h[i] = x[i + 1] - x[i];
     for(int i = 1; i < n; i++)
@@ -46,10 +64,7 @@ int main()
     for(int i = 0; i < n - 1; i++)
         B[i] = d[i + 1];
     vector<long double> M = Column_Elimination(A, B);
-    for(int i = 0; i < len; i++)
-        cout << M[i] << " ";
-    file.close();
-    return 0;
+    return M;
 }
 
 // 列主元消去法求解线性方程组

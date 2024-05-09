@@ -3,11 +3,11 @@ using namespace std;
 
 // Define the acceleration functions ax and ay
 long double ax(long double t) {
-    return t * sin(t + 1.0 / t);
+    return sin(t) / (1 + sqrt(t));
 }
 
 long double ay(long double t) {
-    return log(t + 1.0) / (t + 1.0);
+    return log(t + 1) / (t + 1);
 }
 
 // Function to perform the Romberg integration
