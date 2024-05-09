@@ -32,6 +32,27 @@
 	\clearpage
 
 	\pagenumbering{arabic}
+	\section{Problem Descriptions}
+	实现带规范方法的反幂法，求得给定矩阵按模最小特征值以及相应的特征向
+	量。
+	\section{Analysis and Algorithms} 
+	 \subsection{LU-Doolittle分解}
+$$\mathbf{A}=\mathbf{L}\mathbf{U}$$
+其中$\mathbf{L}$为单位下三角阵,$\mathbf{U}$为上三角阵.
+则$\mathbf{A}\mathbf{x}=\mathbf{b}$可化为$$\mathbf{L}\mathbf{U}\mathbf{x}=\mathbf{L}\mathbf{y}=\mathbf{b}$$
+只需解方程组
+$$\mathbf{L}\mathbf{y}=\mathbf{b}$$
+$$\mathbf{U}\mathbf{x}=\mathbf{y}$$
+\subsection{规范化反幂法}
+$$
+ \begin{cases} 
+\mathbf{Y^{(k)}} =\mathbf{X^{(k)}}/\|\mathbf{X^{(k)}}\|_{\infty}, \\
+\mathbf{A}\mathbf{X^{(k+1)}}=\mathbf{Y^{(k)}},
+\end{cases}
+k=0,1,…
+$$
+$\|\mathbf{X^{(k+1)}}\|-\|\mathbf{X^{(k)}}\|_{\infty}\leq10^{-5}$时停止迭代，则$\mathbf{A}$的按模最小特征值$\lambda=1/\|\mathbf{X^{(k+1)}}\|$,$\lambda$对应的特征向量为$\mathbf{Y^{(k)}}$.
+
 \section{Results}
 
 \begin{figure}[H]
