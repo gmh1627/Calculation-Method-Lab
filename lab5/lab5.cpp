@@ -14,7 +14,7 @@ int main()
         return 1;
     }
 
-    vector<long double> x, y, lambda, d, h, miu;
+    vector<long double> x, y, lambda, d, h1, miu, h2;
     long double a, b;
     while (file >> a >> b)
     {
@@ -22,19 +22,71 @@ int main()
         y.push_back(b);
         lambda.push_back(0);
         d.push_back(0);
-        h.push_back(0);
+        h1.push_back(0);
+        h2.push_back(0);
         miu.push_back(0);
     }
+    
+    cout << "原始数据插值结果：" << endl;
     vector<long double> M1 = Spline_Interpolation(x, y);
+    vector<vector<long double>> S1(M1.size()-1, vector<long double>(4, 0));
     for(int i = 0; i < M1.size(); i++)
-        cout << M1[i] << " ";
-    cout << endl;
+    {
+        cout << "M1[" << i << "]:" << M1[i] << endl;
+        h1[i] = x[i + 1] - x[i];
+    }
+        
+    
+    for(int i = 0; i < M1.size() - 1; i++)
+    {
+        cout << "S1[" << i + 1 << "]:";
+        S1[i][0] = (M1[i + 1] - M1[i]) / (6 * h1[i]);
+        cout << S1[i][0] << "x^3";
+        S1[i][1] = (x[i + 1] * M1[i] - x[i] * M1[i + 1]) / (2 * h1[i]);
+        if(S1[i][1] >= 0)
+            cout << "+" ;
+        cout << S1[i][1] << "x^2";
+        S1[i][2] = (3 * M1[i+1] * x[i] * x[i] - 3 * M1[i] * x[i + 1] * x[i + 1] - 6 * y[i] + 6 * y[i+1] + h1[i] * h1[i] * M1[i] - h1[i] * h1[i] * M1[i + 1]) / (6 * h1[i]);
+        if(S1[i][2] >= 0)
+            cout << "+" ;
+        cout << S1[i][2] << "x";
+        S1[i][3] = (x[i + 1] * x[i + 1] * x[i + 1] * M1[i] - x[i] * x[i] * x[i] * M1[i + 1] + 6 * x[i+1] * y[i] - 6 * x[i] * y[i+1] - h1[i] * h1[i] * M1[i] * x[i+1] + h1[i] * h1[i] * M1[i+1] * x[i]) / (6 * h1[i]);
+        if(S1[i][3] >= 0)
+            cout << "+" ;
+        cout << S1[i][3];
+        cout << endl;
+    }
 
     //修改第十个压铁的坐标为(0,10)
+    cout << endl << "修改第十个压铁的坐标为(0,10)后：" << endl;
     y[9] = 10;
     vector<long double> M2 = Spline_Interpolation(x, y);
+    vector<vector<long double>> S2(M2.size()-1, vector<long double>(4, 0));
     for(int i = 0; i < M2.size(); i++)
-        cout << M2[i] << " ";
+    {
+        cout << "M2[" << i << "]:" << M2[i] << endl;
+        h2[i] = x[i + 1] - x[i];
+    }
+    cout << endl;
+    for(int i = 0; i < M2.size() - 1; i++)
+    {
+        cout << "S2[" << i + 1 << "]:";
+        S2[i][0] = (M1[i + 1] - M1[i]) / (6 * h1[i]);
+        cout << S2[i][0] << "x^3";
+        S2[i][1] = (x[i + 1] * M1[i] - x[i] * M1[i + 1]) / (2 * h1[i]);
+        if(S2[i][1] >= 0)
+            cout << "+" ;
+        cout << S2[i][1] << "x^2";
+        S2[i][2] = (3 * M1[i+1] * x[i] * x[i] - 3 * M1[i] * x[i + 1] * x[i + 1] - 6 * y[i] + 6 * y[i+1] + h1[i] * h1[i] * M1[i] - h1[i] * h1[i] * M1[i + 1]) / (6 * h1[i]);
+        if(S2[i][2] >= 0)
+            cout << "+" ;
+        cout << S2[i][2] << "x";
+        S2[i][3] = (x[i + 1] * x[i + 1] * x[i + 1] * M1[i] - x[i] * x[i] * x[i] * M1[i + 1] + 6 * x[i+1] * y[i] - 6 * x[i] * y[i+1] - h1[i] * h1[i] * M1[i] * x[i+1] + h1[i] * h1[i] * M1[i+1] * x[i]) / (6 * h1[i]);
+        if(S2[i][3] >= 0)
+            cout << "+" ;
+        cout << S2[i][3];
+        cout << endl;
+    }
     return 0;
 }
 

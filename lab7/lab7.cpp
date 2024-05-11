@@ -25,9 +25,9 @@ int main()
 }
 
 void Calculate(int maxIter) {
-    satisfiedCount = 0; // use the global variable
+    satisfiedCount = 0; 
     cout << "maxIter = " << maxIter << endl;
-    ofstream outFile("trajectory.txt");
+    ofstream outFile("trajectory.txt", ios::app);
     for (long double t = 0.1; t < 10.1; t += 0.1) 
     { 
         Vx[10*t-1] = romberg(ax, 0, t, eps, maxIter, 0);
@@ -55,12 +55,16 @@ long double ay(long double t)
 
 long double vx(long double t) 
 {
-    return Vx[10*t-1];
+    if(t == 0)
+        return 0;
+    return Vx[ceil(10*t)-1];
 }
 
 long double vy(long double t) 
 {
-    return Vy[10*t-1];
+    if(t == 0)
+        return 0;
+    return Vy[ceil(10*t)-1];
 }
 
 // Perform the Romberg integration
