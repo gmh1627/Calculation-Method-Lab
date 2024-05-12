@@ -55,16 +55,12 @@ long double ay(long double t)
 
 long double vx(long double t) 
 {
-    if(t == 0)
-        return 0;
-    return Vx[ceil(10*t)-1];
+    return t == 0 ? 0 : Vx[ceil(10*t)-1];
 }
 
 long double vy(long double t) 
 {
-    if(t == 0)
-        return 0;
-    return Vy[ceil(10*t)-1];
+    return t == 0 ? 0 : Vy[ceil(10*t)-1];
 }
 
 // Perform the Romberg integration

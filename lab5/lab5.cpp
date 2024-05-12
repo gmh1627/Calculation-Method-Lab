@@ -34,12 +34,11 @@ int main()
     {
         cout << "M1[" << i << "]:" << M1[i] << endl;
         h1[i] = x[i + 1] - x[i];
-    }
-        
-    
+    }    
+    cout << endl;
     for(int i = 0; i < M1.size() - 1; i++)
     {
-        cout << "S1[" << i + 1 << "]:";
+        cout << "S1[" << i << "]:";
         S1[i][0] = (M1[i + 1] - M1[i]) / (6 * h1[i]);
         cout << S1[i][0] << "x^3";
         S1[i][1] = (x[i + 1] * M1[i] - x[i] * M1[i + 1]) / (2 * h1[i]);
@@ -70,18 +69,18 @@ int main()
     cout << endl;
     for(int i = 0; i < M2.size() - 1; i++)
     {
-        cout << "S2[" << i + 1 << "]:";
-        S2[i][0] = (M1[i + 1] - M1[i]) / (6 * h1[i]);
+        cout << "S2[" << i << "]:";
+        S2[i][0] = (M2[i + 1] - M2[i]) / (6 * h1[i]);
         cout << S2[i][0] << "x^3";
-        S2[i][1] = (x[i + 1] * M1[i] - x[i] * M1[i + 1]) / (2 * h1[i]);
+        S2[i][1] = (x[i + 1] * M1[i] - x[i] * M2[i + 1]) / (2 * h1[i]);
         if(S2[i][1] >= 0)
             cout << "+" ;
         cout << S2[i][1] << "x^2";
-        S2[i][2] = (3 * M1[i+1] * x[i] * x[i] - 3 * M1[i] * x[i + 1] * x[i + 1] - 6 * y[i] + 6 * y[i+1] + h1[i] * h1[i] * M1[i] - h1[i] * h1[i] * M1[i + 1]) / (6 * h1[i]);
+        S2[i][2] = (3 * M2[i+1] * x[i] * x[i] - 3 * M2[i] * x[i + 1] * x[i + 1] - 6 * y[i] + 6 * y[i+1] + h2[i] * h2[i] * M2[i] - h2[i] * h2[i] * M2[i + 1]) / (6 * h2[i]);
         if(S2[i][2] >= 0)
             cout << "+" ;
         cout << S2[i][2] << "x";
-        S2[i][3] = (x[i + 1] * x[i + 1] * x[i + 1] * M1[i] - x[i] * x[i] * x[i] * M1[i + 1] + 6 * x[i+1] * y[i] - 6 * x[i] * y[i+1] - h1[i] * h1[i] * M1[i] * x[i+1] + h1[i] * h1[i] * M1[i+1] * x[i]) / (6 * h1[i]);
+        S2[i][3] = (x[i + 1] * x[i + 1] * x[i + 1] * M2[i] - x[i] * x[i] * x[i] * M2[i + 1] + 6 * x[i+1] * y[i] - 6 * x[i] * y[i+1] - h2[i] * h2[i] * M2[i] * x[i+1] + h2[i] * h2[i] * M2[i+1] * x[i]) / (6 * h2[i]);
         if(S2[i][3] >= 0)
             cout << "+" ;
         cout << S2[i][3];
@@ -91,7 +90,8 @@ int main()
 }
 
 //三次样条插值
-vector<long double> Spline_Interpolation(const vector<long double>& x, const vector<long double>& y) {
+vector<long double> Spline_Interpolation(const vector<long double>& x, const vector<long double>& y) 
+{
     int len = x.size();
     int n = len - 1;
     vector<long double> h(n), lambda(n), miu(n), d(n);
