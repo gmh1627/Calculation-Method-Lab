@@ -19,10 +19,10 @@ x_ifft, y_ifft = read_data('ifft_f2(1).txt')
 # 绘制图像
 plt.figure(figsize=(12, 6))
 
-plt.plot(x_discrete, y_discrete, marker='o', color='blue', label='Discrete f1')
-plt.plot(x_ifft, y_ifft, marker='o', color='red', label='IFFT of f1')
+plt.plot(x_discrete, y_discrete, marker='o', color='blue', label='Discrete f2')
+plt.plot(x_ifft, y_ifft, marker='o', color='red', label='IFFT of f2')
 
-plt.title('Discrete and IFFT of f1')
+plt.title('Discrete and IFFT of f2')
 plt.xlabel('x')
 plt.ylabel('f1')
 plt.legend()
