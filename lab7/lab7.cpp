@@ -2,16 +2,16 @@
 using namespace std;
 
 int satisfiedCount;
-int maxIter;
+int M;
 long double eps = 1e-6, proportion;
 vector<long double> Vx(100), Vy(100);
 
-void Calculate(int maxIter);
+void Calculate(int M);
 long double ax(long double t);
 long double ay(long double t);
 long double vx(long double t);
 long double vy(long double t);
-long double romberg(function<long double(long double)> f, long double a, long double b, long double eps, int maxIter, bool isX);// Perform the Romberg integration
+long double romberg(function<long double(long double)> f, long double a, long double b, long double eps, int M, bool isX);// Perform the Romberg integration
 
 int main() 
 {
@@ -24,23 +24,23 @@ int main()
     return 0;
 }
 
-void Calculate(int maxIter) {
+void Calculate(int M) {
     satisfiedCount = 0; 
-    cout << "maxIter = " << maxIter << endl;
+    cout << "M = " << M << endl;
     ofstream outFile("trajectory.txt", ios::app);
     for (long double t = 0.1; t < 10.1; t += 0.1) 
     { 
-        Vx[10*t-1] = romberg(ax, 0, t, eps, maxIter, 0);
-        Vy[10*t-1] = romberg(ay, 0, t, eps, maxIter, 0);
-        long double x = romberg(vx, 0, t, eps, maxIter, 1);
-        long double y = romberg(vy, 0, t, eps, maxIter, 0);
+        Vx[10*t-1] = romberg(ax, 0, t, eps, M, 0);
+        Vy[10*t-1] = romberg(ay, 0, t, eps, M, 0);
+        long double x = romberg(vx, 0, t, eps, M, 1);
+        long double y = romberg(vy, 0, t, eps, M, 0);
         cout << fixed << setprecision(1) << "At t = " << t << ", vx = " << setprecision(6) << Vx[10*t-1] << ", vy = " << setprecision(6) << Vy[10*t-1] << ", " << "(x, y) = (" << setprecision(6) << x << ", " << setprecision(6) << y << ")" << endl;
 
-        if (maxIter == 8)
+        if (M == 8)
             outFile << fixed << setprecision(6) << x << " " << y << "\n";
     }
     long double proportion = (long double)satisfiedCount / 100;
-    cout << "At maxIter = " << maxIter << ", proportion of times the error requirement of x was satisfied: " << proportion << endl;
+    cout << "At M = " << M << ", proportion of times the error requirement of x was satisfied: " << proportion << endl;
 }
 
 long double ax(long double t) 
@@ -64,28 +64,28 @@ long double vy(long double t)
 }
 
 // Perform the Romberg integration
-long double romberg(function<long double(long double)> f, long double a, long double b, long double eps, int maxIter, bool isX) {
-    long double h[maxIter], r[maxIter][maxIter];
-    h[0] = b - a;
-    r[0][0] = 0.5 * h[0] * (f(a) + f(b));
+long double romberg(function<long double(long double)> f, long double a, long double b, long double eps, int M, bool isX) {
+    long double h[M+1], r[M+1][M+1];
+    h[1] = b - a;
+    r[1][1] = 0.5 * h[1] * (f(a) + f(b));
 
-    for (int i = 1; i < maxIter; i++) 
+    for (int k = 2; k <= M; k++) 
     {
-        h[i] = 0.5 * h[i-1];
+        h[k] = 0.5 * h[k-1];
         long double sum = 0;
-        for (int k = 0; k < pow(2, i-1); k++)
-            sum += f(a + (2*k+1) * h[i]);
-        r[i][0] = 0.5 * r[i-1][0] + h[i] * sum;
+        for (int i = 1; i <= pow(2, k-2); i++)
+            sum += f(a + (2*i-1) * h[k]);
+        r[k][1] = 0.5 * (r[k-1][1] + h[k-1] * sum);
 
-        for (int j = 1; j <= i; j++)
-            r[i][j] = r[i][j-1] + (r[i][j-1] - r[i-1][j-1]) / (pow(4, j) - 1);
+        for (int j = 2; j <= k; j++)
+            r[k][j] = r[k][j-1] + (r[k][j-1] - r[k-1][j-1]) / (pow(4, j-1) - 1);
 
-        if (i > 1 && fabs(r[i][i] - r[i-1][i-1]) < eps)
+        if (k > 2 && fabs(r[k][k] - r[k-1][k-1]) < eps)
         {
             if(isX)
                 satisfiedCount++;
-            return r[i][i];
+            return r[k][k];
         }
     }
-    return r[maxIter-1][maxIter-1];
+    return r[M][M];
 }

@@ -3,9 +3,6 @@
 using namespace std;
 
 const double PI = acos(-1);
-random_device rd;
-mt19937 gen(rd());
-uniform_real_distribution<> dis(0, 1);
 
 complex<double> f1(double t);
 complex<double> f2(double t);
@@ -106,6 +103,9 @@ complex<double> f1(double t) {
 }
 
 complex<double> f2(double t) {
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_real_distribution<> dis(0, 1);
     return 0.7 * sin(2 * PI * 2 * t) + sin(2 * PI * 5 * t) + 0.3 * dis(gen);
 }
 

@@ -11,7 +11,7 @@
 \title{\begin{figure}[H]
 	\centering 
 	\includegraphics[height=7cm,width=14cm]{E:/Pictures/中科大.jpg}
-	\end{figure}\Huge\textbf{Lab 6}\\\huge{}}
+	\end{figure}\Huge\textbf{Lab 6}\\\huge{FFT与IFFT}}
 \date{}
 \punctstyle{banjiao} 
 \pagestyle{fancy}
@@ -27,13 +27,13 @@
 	
     \[\makebox{\Large{学号：\underline{\makebox[5cm]{PB22061161}}}}\]
 	
-	$$\makebox{\Large{日期：\underline{\makebox[5cm]{2024.6.10}}}}$$
+	$$\makebox{\Large{日期：\underline{\makebox[5cm]{2024.5.26}}}}$$
 	
 	\clearpage
 
 	\pagenumbering{arabic}
 	\section{Problem Descriptions}
-
+	通过快速傅里叶变换与快速傅里叶逆变换实现对给定函数的 Fourier 分析以及重建。
 	\section{Analysis and Algorithms} 
 	\subsection{Algorithm 1 FFT}
 
@@ -115,28 +115,53 @@ $\textbf{return g}$
 	\section{Results}
 	\begin{figure}[H]
 		\centering 
+		\includegraphics[height=1.5cm,width=14cm]{7.png}
+		\caption{}
+	\end{figure}
+	\begin{figure}[H]
+		\centering 
+		\includegraphics[height=4.5cm,width=14cm]{8.png}
+		\caption{}
+	\end{figure}
+	\begin{figure}[H]
+		\centering 
 		\includegraphics[height=7cm,width=14cm]{1.png}
-		\end{figure}
-		
+		\caption{}
+	\end{figure}
+	\begin{figure}[H]
+		\centering 
+		\includegraphics[height=4.5cm,width=14cm]{9.png}
+		\caption{}
+	\end{figure}
 			\begin{figure}[H]
 				\centering 
 				\includegraphics[height=7cm,width=14cm]{2.png}
-				\end{figure}
+				\caption{}
+			\end{figure}
 				\begin{figure}[H]
 					\centering 
 					\includegraphics[height=7cm,width=14cm]{3.png}
-					\end{figure}
+					\caption{}
+				\end{figure}
 					\begin{figure}[H]
 						\centering 
 						\includegraphics[height=7cm,width=14cm]{4.png}
-						\end{figure}
+						\caption{}
+					\end{figure}
 						\begin{figure}[H]
 							\centering 
 							\includegraphics[height=7cm,width=14cm]{5.png}
-							\end{figure}
+							\caption{}
+						\end{figure}
 							\begin{figure}[H]
 								\centering 
 								\includegraphics[height=7cm,width=14cm]{6.png}
-								\end{figure}
+								\caption{只取前25\%频率的结果}
+							\end{figure}
 		\section{Conclusion}
+		1. 采样数目为128时，抽样和重建的结果更加接近原函数，且FFT后频域上模长不为0 的频率与 采样数目为16时相同，但模长更大；
+		
+		2.对于f2，分析去掉高频系数后IFFT的结果明显偏离于原来的抽样结果，因为去掉高频系数时会造成频率的损失。
+		
+		
     \end{document}
