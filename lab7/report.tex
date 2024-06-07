@@ -33,7 +33,7 @@
 
 	\pagenumbering{arabic}
 	\section{Problem Descriptions}
-
+已知加速度，用Romberg数值积分计算速度和位移。
 	\section{Analysis and Algorithms}
 	现在要用数值方法求$\int_{a}^{b} f(x) \, dx$，
 	
@@ -67,7 +67,19 @@ $$R_{k,j}=R_{k,j-1}+\frac{R_{k,j-1}-R_{k-1,j-1}}{4^{j-1}-1},k=2,3,\cdots $$
 对每一个$k,j$从 2 做到$k$,一直做到$|R_k,k-R_{k-1,k-1}|$小于给定控制精度时停止
 计算.
 	\section{Results}
-		
+	\begin{figure}[H]
+		\centering 
+		\includegraphics[height=7cm,width=14cm]{1.png}
+		\caption{M=8时的粒子轨迹}
+		\end{figure}
+		\begin{figure}[H]
+			\centering 
+			\includegraphics[height=7cm,width=10cm]{2.png}
+			\caption{部分输出结果}
+			\end{figure}
 			
 		\section{Conclusion}
+		M=4时Romberg积分达到要求精度的比例为0.05，M=8时为0.88，M=12,16,20时均为1，从结果可看出M越大，Romberg积分达到要求精度的比例越高。
+		但由于M越大，计算量越大，耗时越长，因此需要根据实际情况，平衡达到要求精度的比例和M的大小，例如在本实验中可以取M=12。
+
     \end{document}

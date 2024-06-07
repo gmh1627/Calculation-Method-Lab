@@ -6,7 +6,6 @@ int M;
 long double eps = 1e-6, proportion;
 vector<long double> Vx(100), Vy(100);
 
-void Calculate(int M);
 long double ax(long double t);
 long double ay(long double t);
 long double vx(long double t);
@@ -15,32 +14,26 @@ long double romberg(function<long double(long double)> f, long double a, long do
 
 int main() 
 {
-    Calculate(4);
-    Calculate(8);
-    Calculate(12);
-    Calculate(16);
-    Calculate(20);
+    for (M = 4; M <= 20; M += 4)
+    {
+        satisfiedCount = 0; 
+        cout << "M = " << M << endl;
+        ofstream outFile("trajectory.txt", ios::app);
+        for (long double t = 0.1; t < 10.1; t += 0.1) 
+        { 
+            long double v_x = vx(t);
+            long double v_y = vy(t);
+            long double x = romberg(vx, 0.0, t, eps, M, 1);
+            long double y = romberg(vy, 0.0, t, eps, M, 1);
+            cout << fixed << setprecision(1) << "At t = " << t << ", vx = " << setprecision(6) << v_x << ", vy = " << setprecision(6) << v_y << ", " << "(x, y) = (" << setprecision(6) << x << ", " << setprecision(6) << y << ")" << endl;
 
-    return 0;
-}
-
-void Calculate(int M) {
-    satisfiedCount = 0; 
-    cout << "M = " << M << endl;
-    ofstream outFile("trajectory.txt", ios::app);
-    for (long double t = 0.1; t < 10.1; t += 0.1) 
-    { 
-        Vx[10*t-1] = romberg(ax, 0, t, eps, M, 0);
-        Vy[10*t-1] = romberg(ay, 0, t, eps, M, 0);
-        long double x = romberg(vx, 0, t, eps, M, 1);
-        long double y = romberg(vy, 0, t, eps, M, 0);
-        cout << fixed << setprecision(1) << "At t = " << t << ", vx = " << setprecision(6) << Vx[10*t-1] << ", vy = " << setprecision(6) << Vy[10*t-1] << ", " << "(x, y) = (" << setprecision(6) << x << ", " << setprecision(6) << y << ")" << endl;
-
-        if (M == 8)
-            outFile << fixed << setprecision(6) << x << " " << y << "\n";
+            if (M == 8)
+                outFile << fixed << setprecision(6) << x << " " << y << "\n";
+        }
+        long double proportion = (long double)satisfiedCount / 200;
+        cout << "At M = " << M << ", proportion of times the error requirement of (x,y) was satisfied: " << proportion << endl;
     }
-    long double proportion = (long double)satisfiedCount / 100;
-    cout << "At M = " << M << ", proportion of times the error requirement of x was satisfied: " << proportion << endl;
+    return 0;
 }
 
 long double ax(long double t) 
@@ -55,12 +48,12 @@ long double ay(long double t)
 
 long double vx(long double t) 
 {
-    return t == 0 ? 0 : Vx[ceil(10*t)-1];
+    return romberg(ax, 0.0, t, eps, M, 0);
 }
 
 long double vy(long double t) 
 {
-    return t == 0 ? 0 : Vy[ceil(10*t)-1];
+    return romberg(ay, 0.0, t, eps, M, 0);
 }
 
 // Perform the Romberg integration

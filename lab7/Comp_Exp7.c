@@ -24,7 +24,7 @@ long double Romberg(long double a, long double b, long double e, int M, int m){
     int n=1;
     long double h=b-a, sum;
     int i,j,k;
-    long double R_1[M], R_2[M], hk[M];//用R_1表示R_k-1,j,R_2表示R_k,j
+    long double R_1[M], R_2[M], hk[M];//用R_1表示R_{k-1,j},R_2表示R_{k,j}
     for(k=1;k<=M;k++){
         hk[k-1]=h/(pow(2, k-1));
     }
@@ -60,6 +60,6 @@ long double Romberg(long double a, long double b, long double e, int M, int m){
 int main(){
     long double i;
     for(i=0.1;i<=10;i+=0.1){
-        printf("(%Lf,%Lf)\n",Romberg(0, i, 1e-6, 12, 1),Romberg(0, i, 1e-6, 12, 2));
+        printf("(%Lf,%Lf)\n",Romberg(0, i, 1e-6, 12, 3),Romberg(0, i, 1e-6, 12, 4));
     }
 }

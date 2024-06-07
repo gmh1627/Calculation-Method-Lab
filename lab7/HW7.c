@@ -3,10 +3,7 @@
 #include<stdlib.h>
 #include<string.h>
 
-
-#define FILENAME "M_8.txt"
-
-int M = 20;
+int M = 4;
 double eps = 1e-6;
 int Satisfied_Count;
 
@@ -23,6 +20,7 @@ double Romberg(double a, double b, double eps, int M, double f(double t), int is
 double vx(double t) {
 	return Romberg(0.0, t, eps, M, ax, 0);
 }
+
 double vy(double t) {
 	return Romberg(0.0, t, eps, M, ay, 0);
 }
@@ -34,11 +32,6 @@ int main() {
 	printf("%d\n", M);
 	Satisfied_Count = 0;
 
-	FILE *fp = fopen(FILENAME, "w");
-	if (fp == NULL) {
-		printf("Error opening file.\n");
-		return 1;
-	}
 	for (double t = 0.1; t <= 10; t += 0.1) {
 		double v_x = vx(t);
 		double v_y = vy(t);
@@ -47,17 +40,10 @@ int main() {
 		double y = Romberg(0.0, t, eps, M, vy, 1);
 		printf("t=%f,vx=%f, vy=%f, (%f, %f)\n", t, v_x, v_y, x, y);
 
-		//fprintf(fp, "%.6f %.6f\n", x, y);
-
 	}
-
-	fclose(fp);
-	printf("Trajectory data saved to %s\n", FILENAME);
 
 	Succ_rate = Satisfied_Count / 200.0;
 	printf("%f%\n", Succ_rate * 100.0);
-
-
 }
 
 double Romberg(double a, double b, double eps, int M, double f(double t), int is_dis) {
